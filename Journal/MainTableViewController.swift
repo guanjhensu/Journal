@@ -21,7 +21,7 @@ class MainTableViewController: UITableViewController {
 
         super.viewDidLoad()
         
-//        deleteRecords()
+        // deleteRecords()
         
         let cellNib = UINib(nibName: "PostTableViewCell", bundle: nil)
         
@@ -40,49 +40,11 @@ class MainTableViewController: UITableViewController {
         self.tableView.reloadData()
     }
 
-    // MARK: Delete Core Data
-
-    func deleteRecords() {
-        let moc = getContext()
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "PostContent")
-        
-        let result = try? moc.fetch(fetchRequest)
-
-        guard let resultData = result as? [PostContent]
-            else { return }
-
-        for object in resultData {
-            moc.delete(object)
-        }
-        
-        do {
-            try moc.save()
-            print("saved!")
-        } catch let error as NSError {
-            print("Could not save \(error), \(error.userInfo)")
-        } catch {
-            
-        }
-        
-    }
-    
-    // MARK: Get Context
-    
-    func getContext () -> NSManagedObjectContext {
-        guard
-            let appDelegate = UIApplication.shared.delegate as? AppDelegate
-            else {
-                print("couldn't find appDelegate")
-                return NSManagedObjectContext()
-        }
-        return appDelegate.persistentContainer.viewContext
-    }
-    
     // MARK: Get Core Data
 
     func fetchCoreDate() {
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Post")
+        _ = NSFetchRequest<NSFetchRequestResult>(entityName: "Post")
         
         guard
             let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -127,12 +89,51 @@ class MainTableViewController: UITableViewController {
         
         cell.userPostTitle.text = posts[indexPath.row].postTitle
         
-       let imageData = posts[indexPath.row].postImage
+        let imageData = posts[indexPath.row].postImage
         
-        cell.userImageView.image = UIImage(data: imageData! as Data ,scale:1.0)
+        if imageData as Data? == nil { return UITableViewCell() }
 
+        cell.userImageView.image = UIImage(data: imageData! as Data, scale: 1.0)
+        
         return cell
     }
+    
+    // MARK: Delete
+
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == UITableViewCellEditingStyle.delete {
+
+            guard
+                let appDelegate = UIApplication.shared.delegate as? AppDelegate
+                else {
+                    print("couldn't find appDelegate")
+                    return
+            }
+            let context = appDelegate.persistentContainer.viewContext
+            
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "PostContent")
+            
+            let result = try? context.fetch(fetchRequest)
+            
+            guard let resultData = result as? [PostContent]
+                else { return }
+
+            context.delete(resultData[indexPath.row])
+            
+            appDelegate.saveContext()
+            
+            fetchCoreDate()
+
+            tableView.reloadData()
+        }
+    }
+    
+    // MARK: header
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
@@ -189,6 +190,38 @@ class MainTableViewController: UITableViewController {
         }
         
         self.present(newContentVC, animated: true, completion: nil)
+        
+    }
+    
+    // MARK: Delete All Core Data
+    
+    func deleteRecords() {
+        
+        guard
+            let appDelegate = UIApplication.shared.delegate as? AppDelegate
+            else {
+                print("couldn't find appDelegate")
+                return
+        }
+        let moc = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "PostContent")
+        
+        let result = try? moc.fetch(fetchRequest)
+        
+        guard let resultData = result as? [PostContent]
+            else { return }
+        
+        for object in resultData {
+            moc.delete(object)
+        }
+        
+        do {
+            try moc.save()
+            print("saved!")
+        } catch let error as NSError {
+            print("Could not save \(error), \(error.userInfo)")
+        }
         
     }
  
