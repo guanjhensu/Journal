@@ -54,13 +54,6 @@ class ContentTableViewController: UITableViewController, UINavigationControllerD
                 return
         }
         let context = appDelegate.persistentContainer.viewContext
-//
-//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "PostContent")
-//        
-//        let result = try? context.fetch(fetchRequest)
-//        
-//        guard let resultData = result as? [PostContent]
-//            else { return }
         
         var error: NSError?
         
