@@ -7,14 +7,101 @@
 //
 
 import UIKit
+import CoreData
 
 class MainTableViewController: UITableViewController {
 
+    // MARK: Property
+
+    var posts  = [PostContent]()
+    
+    // MARK: View Life Cycle
+
     override func viewDidLoad() {
+
         super.viewDidLoad()
+        
+//        deleteRecords()
+        
+        let cellNib = UINib(nibName: "PostTableViewCell", bundle: nil)
+        
+        self.tableView.register(cellNib, forCellReuseIdentifier: "PostCell")
 
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        fetchCoreDate()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        self.tableView.reloadData()
+    }
 
+    // MARK: Delete Core Data
+
+    func deleteRecords() {
+        let moc = getContext()
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "PostContent")
+        
+        let result = try? moc.fetch(fetchRequest)
+
+        guard let resultData = result as? [PostContent]
+            else { return }
+
+        for object in resultData {
+            moc.delete(object)
+        }
+        
+        do {
+            try moc.save()
+            print("saved!")
+        } catch let error as NSError {
+            print("Could not save \(error), \(error.userInfo)")
+        } catch {
+            
+        }
+        
+    }
+    
+    // MARK: Get Context
+    
+    func getContext () -> NSManagedObjectContext {
+        guard
+            let appDelegate = UIApplication.shared.delegate as? AppDelegate
+            else {
+                print("couldn't find appDelegate")
+                return NSManagedObjectContext()
+        }
+        return appDelegate.persistentContainer.viewContext
+    }
+    
+    // MARK: Get Core Data
+
+    func fetchCoreDate() {
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Post")
+        
+        guard
+            let appDelegate = UIApplication.shared.delegate as? AppDelegate
+            else {
+                print("couldn't find appDelegate")
+                return
+        }
+        
+        let context = appDelegate.persistentContainer.viewContext
+        
+        do {
+            posts = try context.fetch(PostContent.fetchRequest())
+        
+        } catch (let error) {
+            print(error)
+        }
+
+        return
+    }
 
     // MARK: - Table view data source
 
@@ -25,12 +112,24 @@ class MainTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        return 3
+        return posts.count
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "postID", for: indexPath)
+        
+        guard
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as? PostTableViewCell
+            else {
+                print("couldn't find PostTableViewcell")
+                return UITableViewCell()
+        }
+        
+        cell.userPostTitle.text = posts[indexPath.row].postTitle
+        
+       let imageData = posts[indexPath.row].postImage
+        
+        cell.userImageView.image = UIImage(data: imageData! as Data ,scale:1.0)
 
         return cell
     }

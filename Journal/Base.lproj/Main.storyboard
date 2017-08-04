@@ -19,32 +19,12 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="postID" rowHeight="212" id="RlG-lT-fPF">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="212" id="RlG-lT-fPF">
                                 <rect key="frame" x="0.0" y="28" width="375" height="212"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RlG-lT-fPF" id="qcE-ag-q1p">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="212"/>
                                     <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_photo" translatesAutoresizingMaskIntoConstraints="NO" id="TUf-P8-XkG">
-                                            <rect key="frame" x="20" y="10" width="335" height="139.5"/>
-                                        </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zcA-p2-Qki">
-                                            <rect key="frame" x="30" y="165.5" width="315" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="TUf-P8-XkG" secondAttribute="trailing" constant="20" id="0O8-OV-QDf"/>
-                                        <constraint firstItem="zcA-p2-Qki" firstAttribute="leading" secondItem="qcE-ag-q1p" secondAttribute="leading" constant="30" id="5AD-wo-bfp"/>
-                                        <constraint firstItem="TUf-P8-XkG" firstAttribute="top" secondItem="qcE-ag-q1p" secondAttribute="top" constant="10" id="8Jh-6B-Mfo"/>
-                                        <constraint firstItem="TUf-P8-XkG" firstAttribute="leading" secondItem="qcE-ag-q1p" secondAttribute="leading" constant="20" id="ATo-bw-rHQ"/>
-                                        <constraint firstItem="zcA-p2-Qki" firstAttribute="top" secondItem="TUf-P8-XkG" secondAttribute="bottom" constant="16" id="Oh5-Pj-AIV"/>
-                                        <constraint firstAttribute="bottom" secondItem="TUf-P8-XkG" secondAttribute="bottom" constant="62" id="p0b-yr-gjU"/>
-                                        <constraint firstAttribute="trailing" secondItem="zcA-p2-Qki" secondAttribute="trailing" constant="30" id="s0h-Z0-vEp"/>
-                                    </constraints>
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>

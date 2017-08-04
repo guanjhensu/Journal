@@ -7,12 +7,13 @@
 //
 
 import UIKit
-import Photos
+import CoreData
+
 
 class ContentTableViewController: UITableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextViewDelegate {
 
     // MARK: Property
-    
+
     @IBOutlet weak var myImageView: UIImageView!
     
     @IBOutlet weak var titleTextField: UITextField!
@@ -22,8 +23,6 @@ class ContentTableViewController: UITableViewController, UINavigationControllerD
     @IBOutlet weak var saveBtn: UIButton!
     
     var imagePicker = UIImagePickerController()
-    
-    var localImageId: String!
     
     // MARK: View Life Cycle
     
@@ -137,70 +136,27 @@ class ContentTableViewController: UITableViewController, UINavigationControllerD
     @IBAction func saveMyPost(_ sender: Any) {
     
         let image = myImageView.image!
-
-//        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         
-        PHPhotoLibrary.shared().performChanges({
-            
-            let result = PHAssetChangeRequest.creationRequestForAsset(from: image)
-            
-            let assetPlaceholder = result.placeholderForCreatedAsset
-
-            self.localImageId = assetPlaceholder?.localIdentifier
+        // save to CoreData
         
-        }) { (isSuccess: Bool, error: Error?) in
-            
-            if isSuccess {
-                
-                let alert = UIAlertController(title: "Saved!", message: "Your image has been saved to album.", preferredStyle: .alert)
-                
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                
-                self.present(alert, animated: true)
-                
-                let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: [self.localImageId], options: nil)
-                
-                let asset = assetResult[0]
-                
-                let options = PHContentEditingInputRequestOptions()
-                
-                options.canHandleAdjustmentData = {(adjustmeta: PHAdjustmentData) -> Bool in
-                    
-                    return true
-                }
-
-                asset.requestContentEditingInput(with: options, completionHandler: { (contentEditingInput: PHContentEditingInput?, _: [AnyHashable : Any]) in
-                    
-                    print("imageURL：", contentEditingInput!.fullSizeImageURL!)})
-                
-                
-                
-                
-                // get image
-                
-                //获取保存的原图
-                PHImageManager.default().requestImage(for: asset,
-                                                      targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit,
-                                                      options: nil, resultHandler: { (image, _:[AnyHashable : Any]?) in
-                                                        print("获取原图成功：\(image)")
-                })
-                //获取保存的缩略图
-                PHImageManager.default().requestImage(for: asset,
-                                                      targetSize: CGSize(width:100, height:100), contentMode: .aspectFit,
-                                                      options: nil, resultHandler: { (image, _:[AnyHashable : Any]?) in
-                                                        print("获取缩略图成功：\(image)")
-                })
-                
-            } else {
-                
-                let alert = UIAlertController(title: "Save error", message: error?.localizedDescription, preferredStyle: .alert)
-                
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                
-                self.present(alert, animated: true)
-            }
+        guard
+            let appDelegate = UIApplication.shared.delegate as? AppDelegate
+            else {
+                print("couldn't find appDelegate")
+                return
         }
         
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let newPost = PostContent(context: context)
+        
+        newPost.postImage = UIImageJPEGRepresentation(image, 1.0) as NSData?
+        
+        newPost.postTitle = self.titleTextField.text
+        
+        newPost.postWord = self.contentTextView.text
+        
+        appDelegate.saveContext()
     }
     
 }
