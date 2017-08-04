@@ -37,6 +37,7 @@ class MainTableViewController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
+        
         self.tableView.reloadData()
     }
 
@@ -130,6 +131,19 @@ class MainTableViewController: UITableViewController {
             fetchCoreDate()
 
             tableView.reloadData()
+        }
+    }
+    
+    // MARK: Edit post
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        if let editPage = self.storyboard?.instantiateViewController(withIdentifier: "newContent") as? ContentTableViewController {
+            
+            editPage.postID = self.posts[indexPath.row].objectID
+
+            self.present(editPage, animated: true, completion: nil)
         }
     }
     

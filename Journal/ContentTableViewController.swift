@@ -24,6 +24,8 @@ class ContentTableViewController: UITableViewController, UINavigationControllerD
     
     var imagePicker = UIImagePickerController()
     
+    var postID: NSManagedObjectID? = nil
+    
     // MARK: View Life Cycle
     
     override func viewDidLoad() {
@@ -34,7 +36,46 @@ class ContentTableViewController: UITableViewController, UINavigationControllerD
         contentTextView.tintColor = UIColor.black
         
         titleTextField.tintColor = UIColor.black
+        
+        editPost()
 
+    }
+    
+    // MARK: Edit
+    
+    func editPost() {
+    
+        if postID == nil { return }
+        
+        guard
+            let appDelegate = UIApplication.shared.delegate as? AppDelegate
+            else {
+                print("couldn't find appDelegate")
+                return
+        }
+        let context = appDelegate.persistentContainer.viewContext
+//
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "PostContent")
+//        
+//        let result = try? context.fetch(fetchRequest)
+//        
+//        guard let resultData = result as? [PostContent]
+//            else { return }
+        
+        var error: NSError?
+        
+        do {
+            let object = try context.existingObject(with: postID!)
+            
+            print(object)
+            
+
+        
+        } catch {
+        
+        }
+
+    
     }
     
     // MARK: Cell height
@@ -157,6 +198,8 @@ class ContentTableViewController: UITableViewController, UINavigationControllerD
         newPost.postWord = self.contentTextView.text
         
         appDelegate.saveContext()
+        
+        self.dismiss(animated: true, completion: nil)
     }
     
 }
